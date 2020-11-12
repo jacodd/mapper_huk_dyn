@@ -1,0 +1,42 @@
+<launch>
+    <!-- A parameter used to stop nodes after capturing data -->
+    <arg name="record_bag" default="false" />
+    <arg name="path_to_bags" value="$(find mapper_dyn_huk)/bags/"/>
+    <param name="capture_point_cloud_360" type="bool" value="true" />
+
+    <!-- Manages pantilt movement and calibration -->
+    <node pkg="mapper_dyn_huk" type="mapping180.py" name="mapping360" output="screen">
+        <param name="map_speed" type="double" value="1"/>
+    </node>
+
+    <!-- Automatically saves the pointcloud in PLY format at the desired folder when the mapping is done -->
+    <node pkg="mapper_dyn_huk" type="pcl_concatenate_360_hok" name="pcl_concatenate" output="screen"> <!-- output="screen" -->
+        <param name="save_point_cloud_path" type="string" value="$(find mapper_dyn_huk)/bags/" />
+    </node>
+
+    <!-- convert pointCloud2 to pointCloud1, the laser_assembler package does not work with pountCloud2 -->
+    <node pkg="mapper_dyn_huk" type="point_cloud_converter_360_hok" name="point_cloud_converter">
+        <remap from="points2_in" to="/converted_pc"/>
+        <remap from="points_out" to="/converted_pc1" />
+    </node>
+
+    <!-- prepare the cloud assembler -->
+    <node type="point_cloud_assembler" pkg="laser_assembler" name="custom_pc_assembler">
+        <remap from="cloud" to="/converted_pc1"/>
+        
+        <param name="max_ctf_cache_time_secslouds" type="double" value="10.0" />
+        <param name="ignore_laser_skew" type="bool" value="true" />
+        <param name="max_clouds" type="int" value="100" />
+        <param name="fixed_frame" type="string" value="base" />
+    </node>
+
+    <!-- 
+        Call the assembler python node 
+        This node performs the publising of the assembled cloud
+    -->
+    <node pkg="mapper_dyn_huk" type="call_assembler.py" name="call_assembler"></node> <!-- output="screen" -->
+
+    <node pkg="rosbag" type="record" name="rosbag_record_hokuyo"
+       args="record -o $(arg path_to_bags) -a -x '(.*)compressed(.*)|(.*)theora(.*)'"
+       if="$(arg record_bag)" />
+</launch>

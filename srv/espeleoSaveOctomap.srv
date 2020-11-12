@@ -1,0 +1,5 @@
+string output_file
+bool is_full
+---
+bool success
+string msg

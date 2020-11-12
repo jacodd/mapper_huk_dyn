@@ -1,0 +1,95 @@
+<?xml version="1.0"?>
+<robot name="dyn_huk">
+   <link name="base">
+    <inertial>
+      <mass value="0.65"/>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <inertia ixx="0.0001" ixy="0" ixz="0" iyy="0.0001" iyz="0" izz="0.0001"/>
+    </inertial>
+    <visual>
+      <material name="dyn_body">
+        <color rgba="0.3 0.3 0.3 1.0"/>
+      </material>
+      <origin xyz="0 0 0"/>
+      <geometry>
+        <box size="0.005 0.003 0.003"/>
+      </geometry>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="0.005 0.003 0.003"/>
+      </geometry>
+      <origin xyz="0 0 0"/>
+    </collision>
+  </link>
+
+   <link name="mount">
+    <inertial>
+      <mass value="0.3"/>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <inertia ixx="0.0001" ixy="0" ixz="0" iyy="0.0001" iyz="0" izz="0.0001"/>
+    </inertial>
+    <visual>
+      <material name="dyn_joint">
+        <color rgba="0.8 0.8 0.8 1.0"/>
+      </material>
+      <origin xyz="0 0 0"/>
+      <geometry>
+         <cylinder length="0.001" radius="0.001"/>
+      </geometry>
+    </visual>
+    <collision>
+      <geometry>
+         <cylinder length="0.001" radius="0.001"/>
+    </geometry>
+      <origin xyz="0 0 0"/>
+    </collision>
+  </link>
+
+  <link name="laser">
+    <inertial>
+      <mass value="0.3"/>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <inertia ixx="0.0001" ixy="0" ixz="0" iyy="0.0001" iyz="0" izz="0.0001"/>
+    </inertial>
+    <visual>
+      <material name="huk_body">
+        <color rgba="0.6 0 0 0.75"/>
+      </material>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+         <cylinder length="0.01" radius="0.003"/>
+      </geometry>
+    </visual>
+    <collision>
+      <geometry>
+         <cylinder length="0.01" radius="0.003"/>
+    </geometry>
+      <origin xyz="0 0 0"/>
+    </collision>
+  </link>
+
+<joint name="dyn_tilt" type="revolute">
+    <parent link="base"/>
+    <origin rpy="0 0 0.0" xyz="0.0012 0 0.0015"/>
+    <child link="mount"/>
+    <axis rpy="0 0 0" xyz="0 0 1"/>
+    <limit effort="30" lower="-3.14" upper="0" velocity="1.0"/>
+  </joint>
+
+<joint name="huk_mount" type="fixed">
+    <parent link="mount"/>
+    <origin rpy="1.57 -1.57 0" xyz="0 0 0.004"/>
+    <child link="laser"/>
+  </joint>
+
+  <transmission name="dyn_trans">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="dyn_tilt">
+      <hardwareInterface>PositionJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="dyn_tilt_motor">
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission>
+</robot>

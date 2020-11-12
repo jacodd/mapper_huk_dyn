@@ -1,0 +1,14 @@
+install dynamixel_workbench https://emanual.robotis.com/docs/en/software/dynamixel/dynamixel_workbench/
+
+roslaunch mapper_dyn_huk dyn.launch 
+
+rviz -d /home/espeleo/catkin_ws/src/mapper/mapper_dyn_huk/config/rviz.rviz
+
+rosservice call /dynamixel_workbench/dynamixel_command "command: ''
+id: 1
+addr_name: 'Goal_Position'
+value: 0"
+comm_result: True
+
+
+rosrun pcl_ros pointcloud_to_pcd input:=/octomap_point_cloud_centers

@@ -1,0 +1,15 @@
+<launch>
+  <include file="$(find mapper_dyn_huk)/launch/init_dynamixel.launch"></include>
+
+  <node name="hokyuo" pkg="urg_node" type="urg_node" />
+
+  <param name="robot_description" textfile="$(find mapper_dyn_huk)/urdf/dyn.urdf"/> 
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher">
+    <remap from="joint_states" to="/dynamixel_workbench/joint_states" />
+  </node>
+
+  <node name="scan_to_pointcloud" pkg="mapper_dyn_huk" type="scan2pc2.py" />
+  <node name="espeleo_save_octomap_service_hok" pkg="mapper_dyn_huk" type="espeleo_save_octomap_service_hok" />
+
+  <include file="$(find mapper_dyn_huk)/launch/octomap_mapping.launch"></include>
+</launch>
