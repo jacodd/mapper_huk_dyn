@@ -2,15 +2,28 @@ install
 dynamixel_workbench: https://emanual.robotis.com/docs/en/software/dynamixel/dynamixel_workbench/
 hokuyo driver: http://wiki.ros.org/urg_node
 
-roslaunch mapper_dyn_huk dyn.launch 
+# Ativar pantilt, sensores e mapeamento
+########################################
+# Esse launch pode ser deixado ativo (é o que tem as transformadas do dynamixel, etc) e os drivers dos sensores. 
 
-rviz -d /home/espeleo/catkin_ws/src/mapper/mapper_dyn_huk/config/rviz.rviz
+roslaunch mapper_dyn_huk init_sensors.launch
 
-rosservice call /dynamixel_workbench/dynamixel_command "command: ''
-id: 1
-addr_name: 'Goal_Position'
-value: 0"
-comm_result: True
+#######################################
+# Ativar mapeamento e gravacao de bags
+#######################################
+# Esse launch ativa a barredura e a gravação dos bags
+# Os Bags e o arquivo do Octomap são armazenados dentro do robô na pasta: 
+# sftp://espeleo@192.168.1.5/home/espeleo/catkin_ws/src/mapper/mapper_dyn_huk
+# 
+# Esse nó NÃO precisa ser desativado ele para sozinho
+
+roslaunch mapper_dyn_huk start_mapping_180.launch
+
+#######################################
+# Visualizaçao com RVIZ desde do rugged
+#######################################
+# Essa configuração do RVIZ prepara o rugged para visualizar os topicos importantes do espeleo
+
+rviz -d ~/catkin_ws/src/mapper/mapper_dyn_huk/config/rviz.rviz
 
 
-rosrun pcl_ros pointcloud_to_pcd input:=/octomap_point_cloud_centers
