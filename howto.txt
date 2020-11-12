@@ -1,4 +1,6 @@
-install dynamixel_workbench https://emanual.robotis.com/docs/en/software/dynamixel/dynamixel_workbench/
+install
+dynamixel_workbench: https://emanual.robotis.com/docs/en/software/dynamixel/dynamixel_workbench/
+hokuyo driver: http://wiki.ros.org/urg_node
 
 roslaunch mapper_dyn_huk dyn.launch 
 
